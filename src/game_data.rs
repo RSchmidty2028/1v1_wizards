@@ -3,6 +3,8 @@
 //! You could also store data associated with each human player here.
 //! We could also store the player's gamepad_id here.
 
+use raylib::ffi::Vector2;
+
 pub struct GameData {
     pub points: u32,
     pub screen_width: i32,
@@ -10,11 +12,11 @@ pub struct GameData {
 }
 
 impl GameData {
-    pub fn new(width: i32, heigth: i32) -> Self {
+    pub fn new(width: i32, height: i32) -> Self {
         Self {
             points: 0,
             screen_width: width,
-            screen_height: heigth
+            screen_height: height,
         }
     }
 

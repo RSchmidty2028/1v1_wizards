@@ -7,12 +7,13 @@ use raylib_framework_testing::scenes::{Scene, SceneSwitch};
 use std::time::Instant;
 
 fn main() {
-    let width: i32 = 640;
-    let height: i32 = 480;
+    let width: i32 = 900;
+    let height: i32 = 900;
     let (mut rl, thread) = raylib::init()
         .size(width, height)
         .title("Raylib Framework Demo")
         .build();
+
 
 
     // create the game data. This prepresents data associated with the human player.
