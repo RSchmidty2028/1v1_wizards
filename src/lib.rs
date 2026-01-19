@@ -6,3 +6,5 @@ pub mod scenes;
 pub mod game_scene;
 pub mod menu_scene;
 pub mod utils;
+pub mod player;
+pub mod projectile;

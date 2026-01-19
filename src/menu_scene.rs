@@ -11,7 +11,6 @@ use crate::utils::*;
 
 /// A start screen or menu screen scene
 pub struct MenuScene;
-
 impl Scene for MenuScene {
     fn on_enter(&mut self, _rl: &mut RaylibHandle, _data: &mut GameData) {}
 
