@@ -311,6 +311,19 @@ impl Scene for GameScene {
                     tint = tint.alpha((((time * 20.0).sin() + 1.0) / 2.0) as f32); 
                 }
 
+                let aim_color = if index == 0 { 
+                Color::CYAN.alpha(0.3) 
+                } else { 
+                Color::ORANGE.alpha(0.3) 
+                };
+
+                let staff_pos = player.staff_position();
+                // the line extends 100 units out from the staff
+                let line_end = staff_pos + (player.aim * 100.0);
+    
+                d_cam.draw_line_ex(staff_pos, line_end, 6.0, aim_color);
+
+
                 let tex_vec = match (index, player.anim_state) {
                     (0, AnimationState::Idle) => &data.player1_idle_tex,
                     (0, AnimationState::Run) => &data.player1_run_tex,
@@ -369,8 +382,8 @@ impl Scene for GameScene {
         } 
         
         // ui overlay
-        d.draw_text(&format!("P1 Score: {}", data.player_scores[0]), 20, 20, 30, Color::BLUE);
-        d.draw_text(&format!("P2 Score: {}", data.player_scores[1]), d.get_screen_width() - 250, 20, 30, Color::RED);
+        d.draw_text(&format!("P1 Score: {}", data.player_scores[0]), 20, 20, 30, Color::ORANGE);
+        d.draw_text(&format!("P2 Score: {}", data.player_scores[1]), d.get_screen_width() - 250, 20, 30, Color::PURPLE);
     }
 
     fn on_exit(&mut self, _rl: &mut RaylibHandle, _data: &mut GameData) {}
