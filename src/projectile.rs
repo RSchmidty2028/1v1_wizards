@@ -25,7 +25,7 @@ impl Projectile {
         self.pos += self.vel * dt;
 
         // despawn if too far away
-        if self.pos.x < -100.0 || self.pos.x > 1400.0 || self.pos.y < -100.0 || self.pos.y > 900.0 {
+        if self.pos.x < -100.0 || self.pos.x > (4.0 * 576.0) || self.pos.y < -100.0 || self.pos.y > (4.0 * 324.0) {
             self.active = false;
         }
     }

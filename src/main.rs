@@ -70,9 +70,69 @@ fn main() {
     let idle_tex_5: Texture2D = rl.load_texture(&thread, "./resources/1_IDLE_004.png").unwrap();
 
     let idle1_vec: Vec<Texture2D> = vec![idle_tex_1,idle_tex_2,idle_tex_3,idle_tex_4,idle_tex_5];
-    // load in background textures
 
-    // load in all the idle2_textures
+    //load in all the jump1_tex
+    let jump1_tex_1: Texture2D = rl.load_texture(&thread, "./resources/4_JUMP_000.png").unwrap();
+    let jump1_tex_2: Texture2D = rl.load_texture(&thread, "./resources/4_JUMP_001.png").unwrap();
+    let jump1_tex_3: Texture2D = rl.load_texture(&thread, "./resources/4_JUMP_002.png").unwrap();
+    let jump1_tex_4: Texture2D = rl.load_texture(&thread, "./resources/4_JUMP_003.png").unwrap();
+    let jump1_tex_5: Texture2D = rl.load_texture(&thread, "./resources/4_JUMP_004.png").unwrap();
+
+    let jump1_vec: Vec<Texture2D> = vec![jump1_tex_1,jump1_tex_2,jump1_tex_3,jump1_tex_4,jump1_tex_5];
+
+    //load in all the hurt1_tex
+    let hurt1_tex_1: Texture2D = rl.load_texture(&thread, "./resources/6_HURT_000.png").unwrap();
+    let hurt1_tex_2: Texture2D = rl.load_texture(&thread, "./resources/6_HURT_001.png").unwrap();
+    let hurt1_tex_3: Texture2D = rl.load_texture(&thread, "./resources/6_HURT_002.png").unwrap();
+    let hurt1_tex_4: Texture2D = rl.load_texture(&thread, "./resources/6_HURT_003.png").unwrap();
+    let hurt1_tex_5: Texture2D = rl.load_texture(&thread, "./resources/6_HURT_004.png").unwrap();
+
+    let hurt1_vec: Vec<Texture2D> = vec![hurt1_tex_1,hurt1_tex_2,hurt1_tex_3,hurt1_tex_4,hurt1_tex_5];
+
+
+    //load in all the attack1_tex
+    let attack1_tex_1: Texture2D = rl.load_texture(&thread, "./resources/5_ATTACK_000.png").unwrap();
+    let attack1_tex_2: Texture2D = rl.load_texture(&thread, "./resources/5_ATTACK_001.png").unwrap();
+    let attack1_tex_3: Texture2D = rl.load_texture(&thread, "./resources/5_ATTACK_002.png").unwrap();
+    let attack1_tex_4: Texture2D = rl.load_texture(&thread, "./resources/5_ATTACK_003.png").unwrap();
+    let attack1_tex_5: Texture2D = rl.load_texture(&thread, "./resources/5_ATTACK_004.png").unwrap();
+    
+
+
+    let attack1_vec: Vec<Texture2D> = vec![attack1_tex_1,attack1_tex_2,attack1_tex_3,attack1_tex_4,attack1_tex_5];
+
+
+    //load in all the jump2_tex
+    let jump2_tex_1: Texture2D = rl.load_texture(&thread, "./resources/p2_JUMP_000.png").unwrap();
+    let jump2_tex_2: Texture2D = rl.load_texture(&thread, "./resources/p2_JUMP_001.png").unwrap();
+    let jump2_tex_3: Texture2D = rl.load_texture(&thread, "./resources/p2_JUMP_002.png").unwrap();
+    let jump2_tex_4: Texture2D = rl.load_texture(&thread, "./resources/p2_JUMP_003.png").unwrap();
+    let jump2_tex_5: Texture2D = rl.load_texture(&thread, "./resources/p2_JUMP_004.png").unwrap();
+
+    let jump2_vec: Vec<Texture2D> = vec![jump2_tex_1,jump2_tex_2,jump2_tex_3,jump2_tex_4,jump2_tex_5];
+
+    //load in all the hurt2_tex
+    let hurt2_tex_1: Texture2D = rl.load_texture(&thread, "./resources/p2_HURT_000.png").unwrap();
+    let hurt2_tex_2: Texture2D = rl.load_texture(&thread, "./resources/p2_HURT_001.png").unwrap();
+    let hurt2_tex_3: Texture2D = rl.load_texture(&thread, "./resources/p2_HURT_002.png").unwrap();
+    let hurt2_tex_4: Texture2D = rl.load_texture(&thread, "./resources/p2_HURT_003.png").unwrap();
+    let hurt2_tex_5: Texture2D = rl.load_texture(&thread, "./resources/p2_HURT_004.png").unwrap();
+
+    let hurt2_vec: Vec<Texture2D> = vec![hurt2_tex_1,hurt2_tex_2,hurt2_tex_3,hurt2_tex_4,hurt2_tex_5];
+
+    //load in all the attack2_tex
+    let attack2_tex_1: Texture2D = rl.load_texture(&thread, "./resources/p2_ATTACK_000.png").unwrap();
+    let attack2_tex_2: Texture2D = rl.load_texture(&thread, "./resources/p2_ATTACK_002.png").unwrap();
+    let attack2_tex_3: Texture2D = rl.load_texture(&thread, "./resources/p2_ATTACK_004.png").unwrap();
+    let attack2_tex_4: Texture2D = rl.load_texture(&thread, "./resources/p2_ATTACK_005.png").unwrap();
+    let attack2_tex_5: Texture2D = rl.load_texture(&thread, "./resources/p2_ATTACK_006.png").unwrap();
+
+
+    let attack2_vec: Vec<Texture2D> = vec![attack2_tex_1,attack2_tex_2,attack2_tex_3,attack2_tex_4,attack2_tex_5];
+
+    
+
+    // load in all the idle2_tex
 
     let idle2_tex_1: Texture2D = rl.load_texture(&thread, "./resources/p2_IDLE_000.png").unwrap();
     let idle2_tex_2: Texture2D = rl.load_texture(&thread, "./resources/p2_IDLE_001.png").unwrap();
@@ -82,6 +142,8 @@ fn main() {
 
     let idle2_vec: Vec<Texture2D> = vec![idle2_tex_1,idle2_tex_2,idle2_tex_3, idle2_tex_4, idle2_tex_5];
 
+
+    // load in background textures
     let background_tex_1: Texture2D = rl.load_texture(&thread, "./resources/background 1.png").unwrap();
     let background_vec: Vec<Texture2D> = vec![background_tex_1];
 
@@ -107,9 +169,15 @@ fn main() {
         width, 
         height,
          run1_vec,
+         p2_run_vec,
          idle1_vec,
-         idle2_vec,
-        p2_run_vec,
+        idle2_vec,
+         hurt1_vec,
+         hurt2_vec,
+         jump1_vec,
+         jump2_vec,
+         attack1_vec,
+         attack2_vec,
          background_vec,
          obstacle_vec
         );

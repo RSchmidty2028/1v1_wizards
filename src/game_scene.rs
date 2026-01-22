@@ -8,39 +8,23 @@ use crate::menu_scene::WinScene;
 use crate::scenes::{Scene, SceneSwitch};
 use crate::game_data::GameData;
 use crate::utils::*;
-use crate::player::Player;
+use crate::player::{AnimationState, Player};
 use crate::projectile::Projectile;
 
 pub struct GameScene {
     players: Vec<Player>,
-    // player_position: Vector2,
-    // player_direction: Vector2,
-    // player_1_speed: f32,
     gravity: f32,
-    // player_1_grounded: bool,
-    // player_1_velo: Vector2,
-    walk_frame: usize,
-    walk_timing: f32,
-    frame_time: f32,
     projectiles: Vec<Projectile>
 }
 
 impl GameScene {
     pub fn new(n: usize, width: i32, height: i32) -> Self {
         Self { 
-            // player_position: Vector2::new((450) as f32, (width - 15) as f32),
-            // player_direction: Vector2::zero(),
-            // player_1_speed: 300.0,
             gravity: 300.0,
             players: vec![
                 Player::new(0,300.0, (height - 15) as f32), //player 1
                 Player::new(1,900.0, (height - 15) as f32)  //player 2
             ],
-            // player_1_grounded: true,
-            // player_1_velo: Vector2::zero(),
-            walk_frame: 0,
-            walk_timing: 0.0,
-            frame_time: 0.1,
             projectiles: Vec::new()
         }
     }
@@ -48,8 +32,6 @@ impl GameScene {
 
 impl Scene for GameScene {
     fn on_enter(&mut self, _rl: &mut RaylibHandle, _data: &mut GameData) {
-        self.walk_frame = 0;
-        self.walk_timing = 0.0;
         }
 
 
@@ -138,12 +120,8 @@ impl Scene for GameScene {
 
             // fire if button pressed AND cooldown is 0
             if shoot && player.shoot_timer <= 0.0 {
-                let center = Vector2::new(player.pos.x + 15.0, player.pos.y + 15.0);
-                let speed = 800.0;
-                new_shots.push(Projectile::new(center, player.aim * speed, player.input_id, Color::BLACK));
-                
-                // reset timer (0.5s delay)
-                player.shoot_timer = 0.5; 
+                player.shoot_timer = 0.8;
+                player.shooting = true;
             }
         }
 
@@ -167,23 +145,108 @@ impl Scene for GameScene {
                 // hit detection
                 if check_collision_circle_rec(p.pos, 10.0, player.rect()) {
                     p.active = false; // destroy bullet
-                    player.pos.y = 0.0; // respawn player
+                    //player.pos.y = 0.0; // respawn player
                     player.vel = Vector2::zero();
+                    player.hit = true;
                 }
             }
         }
-        for player in &mut self.players {
-             let player_moving = player.vel.x != 0.0;
-                     if player_moving {
-                        self.walk_timing += dt;
-                        self.frame_time = 0.1;
 
-                    if self.walk_timing >= self.frame_time {
-                        self.walk_timing = 0.0;
-                        self.walk_frame = (self.walk_frame + 1) % _data.player1_run_tex.len();
-            }
-        } 
+    for player in &mut self.players{
+
+        let new_state = player.determine_anim_state();
+        if new_state == AnimationState::Hurt && player.anim_state != AnimationState::Hurt {
+            player.anim_state = AnimationState::Hurt;
+            player.anim_frame = 0;
+            player.anim_timer = 0.0;
+}
+    else if new_state == AnimationState::Shoot && player.anim_state != AnimationState:: Shoot {
+            player.anim_frame = 0;
+            player.anim_timer = 0.0;
+            player.attack_fired = false;
+            player.anim_state = new_state;
         }
+       else if new_state != player.anim_state {
+            player.anim_state = new_state;
+            player.anim_frame = 0;
+            player.anim_timer = 0.0;
+        }
+
+        
+        let frame_time = match player.anim_state {
+            AnimationState::Shoot => 0.2,
+            AnimationState::Jump => 0.3,
+            _=> 0.1,
+        };
+        
+
+        let max_frames = match player.anim_state {
+
+            AnimationState::Hurt => _data.player1_hurt_tex.len(),
+            AnimationState::Idle => _data.player1_idle_tex.len(),
+            AnimationState::Run => _data.player1_run_tex.len(),
+            AnimationState::Shoot => _data.player1_attack_tex.len(),
+            AnimationState::Jump => _data.player1_jump_tex.len()
+        };
+
+        player.anim_timer +=dt;
+
+        if player.anim_timer > frame_time {
+
+            player.anim_timer = 0.0;
+
+        match player.anim_state {
+            AnimationState::Run | AnimationState::Idle => {
+                player.anim_frame = (player.anim_frame + 1) % max_frames;
+            }
+            AnimationState::Jump  => {
+                if player.anim_frame + 1 < max_frames {
+                    player.anim_frame += 1;
+                }
+            }
+            AnimationState::Hurt => {
+                if player.anim_frame + 1 < max_frames {
+                    player.anim_frame += 1;
+
+                } else {
+                    player.hit = false;
+                }
+            }
+            AnimationState::Shoot => {
+                let shoot_frame = max_frames - 1;
+                if player.anim_frame == shoot_frame && !player.attack_fired {
+
+                    let center = player.staff_position();
+                    let speed = 800.0;
+                    let direction = if player.aim.length() > 0.0 {
+                        player.aim
+                    } 
+                    else if player.facing_left{
+                        Vector2::new(-1.0,0.0)
+                    }
+                    else {
+                        Vector2::new(1.0,0.0)
+                    };
+
+                    self.projectiles.push(Projectile::new(center, direction * speed, player.input_id, Color::WHITE));
+                
+                player.attack_fired = true;
+
+                }
+
+                if player.anim_frame + 1 < max_frames {
+                    player.anim_frame += 1;
+                }
+                else {
+                    player.anim_frame = 0;
+                    player.shooting = false;
+                }
+                
+            }
+        }
+        }
+    }
+        
 
         // clean up old bullets
         self.projectiles.retain(|p| p.active);
@@ -195,8 +258,8 @@ impl Scene for GameScene {
             player.pos.x += player.vel.x * dt;
             player.pos.y += player.vel.y * dt;
 
-            if player.pos.y > (floor_y -5) as f32{
-                player.pos.y = (floor_y -5) as f32;
+            if player.pos.y > (floor_y) as f32{
+                player.pos.y = (floor_y) as f32;
                 player.vel.y = 0.0;
                 player.grounded = true;
             }
@@ -207,13 +270,6 @@ impl Scene for GameScene {
 
     fn draw(&self, d: &mut RaylibDrawHandle, data: &mut GameData){
         d.clear_background(Color::WHITE);
-        // // Draw last point in the vector
-        // if let Some(last) = self.points.last() {
-        //     d.draw_circle(last.x as i32,
-        //      last.y as i32, 
-        //     20.0, 
-        //      Color::BLUE);
-        // }
 
 
         let back_source = Rectangle::new(
@@ -239,33 +295,75 @@ impl Scene for GameScene {
 
 
 
-        let r1; 
-        if self.players[0].facing_left {
-             r1 = Rectangle::new(0.0, 0.0, -419.0, 380.0);
-        }
-        else {
-            r1 = Rectangle::new(0.0,0.0,419.0,380.0);
-        }
+    let player = &self.players[0];
 
+        let base_height:f32 = 128.0;
+
+
+    let texture = match player.anim_state {
+        AnimationState::Idle => &data.player1_idle_tex[player.anim_frame],
+        AnimationState::Jump => &data.player1_jump_tex[player.anim_frame],
+        AnimationState::Run => &data.player1_run_tex[player.anim_frame],
+        AnimationState::Shoot => &data.player1_attack_tex[player.anim_frame],
+        AnimationState::Hurt => &data.player1_hurt_tex[player.anim_frame]
+    };
+
+    let scale = base_height / 380.0;
+
+        let mut p1_source:Rectangle =  match player.anim_state {
+            AnimationState::Hurt | AnimationState::Run | AnimationState::Shoot =>Rectangle::new(0.0, 0.0, texture.width() as f32, (texture.height() - 30) as f32),
+            _ => Rectangle::new(0.0,0.0,texture.width() as f32, (texture.height()-10) as f32)
+        };
+        if player.facing_left {
+            p1_source.width = -p1_source.width;
+        }
         
-        let r2 = Rectangle::new(self.players[0].pos.x as f32, self.players[0].pos.y as f32, 128.0, 128.0);
-        let origin = Vector2::new(64.0, 120.0);
-        d.draw_texture_pro(&data.player1_run_tex[self.walk_frame], r1, r2, origin, 0.0, Color::WHITE);
 
-        let p2_source;
+        let w = texture.width() as f32 * scale;
+        let h = texture.height() as f32 * scale;
 
-        if self.players[1].facing_left {
-            p2_source = Rectangle::new(0.0, 0.0, -419.0, 400.0);
+        let p1_dest = Rectangle::new(self.players[0].pos.x as f32, self.players[0].pos.y as f32, w, h);
+
+        let p1_origin = Vector2::new(w/2.0, h);
+
+    d.draw_texture_pro(texture, p1_source, p1_dest, p1_origin, 0.0, Color::WHITE);
+
+
+
+
+    let player2 = &self.players[1];
+
+    let texture2 = match player2.anim_state {
+        AnimationState::Idle => &data.player2_idle_tex[player2.anim_frame],
+        AnimationState::Jump => &data.player2_jump_tex[player2.anim_frame],
+        AnimationState::Run => &data.player2_run_tex[player2.anim_frame],
+        AnimationState::Shoot => &data.player2_attack_tex[player2.anim_frame],
+        AnimationState::Hurt => &data.player2_hurt_tex[player2.anim_frame]
+    };
+    let w2 = texture2.width() as f32 * scale;
+    let h2 = texture2.height() as f32 * scale;
+
+
+        let mut p2_source:Rectangle =  match player2.anim_state {
+            AnimationState::Hurt | AnimationState::Run | AnimationState::Shoot =>Rectangle::new(0.0, 0.0, texture2.width() as f32, (texture2.height()- 80) as f32),
+            _ => Rectangle::new(0.0,0.0, texture2.width() as f32, (texture2.height()-10) as f32)
+        };
+        if player2.facing_left {
+            p2_source.width = -p2_source.width;
         }
-        else {
-            p2_source = Rectangle::new(0.0, 0.0, 419.0, 400.0);
-        }
-        let p2_dest = Rectangle::new(self.players[1].pos.x as f32, self.players[1].pos.y as f32, 128.0, 128.0);
-        let p2_origin = Vector2::new(64.0, 120.0);
-        d.draw_texture_pro(&data.player2_run_tex[self.walk_frame], p2_source,p2_dest,p2_origin, 0.0, Color::WHITE);
+        let p2_dest = Rectangle::new(self.players[1].pos.x as f32, self.players[1].pos.y as f32, w2, h2);
+        let p2_origin = Vector2::new(w2/2.0, h2);
+        d.draw_texture_pro(texture2, p2_source, p2_dest, p2_origin, 0.0, Color::WHITE);
+        
+    for p in &self.projectiles {
+        p.draw(d);
+    }
+
+
+
             
         
-        let ob_1_source = Rectangle::new(0.0, 0.0, 64.0,64.0);
+        let ob_1_source = Rectangle::new(16.0, 16.0, 48.0,48.0);
         let ob_1_destination = Rectangle::new(500.0, 800.0, 128.0, 128.0);
         let ob_origin = Vector2::new(0.0,0.0);
 
