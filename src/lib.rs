@@ -8,3 +8,4 @@ pub mod menu_scene;
 pub mod utils;
 pub mod player;
 pub mod projectile;
+pub mod win_scene;
