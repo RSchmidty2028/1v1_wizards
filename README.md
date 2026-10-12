@@ -1,5 +1,5 @@
 # Rust Raylib Framework starter
-This is a simple game framework for Raylib using Rust. The design was developed in coordination with ChatGPT 5.2. See the file "game_architecture_rust.pdf" for details.
+This is a simple game framework for Raylib using Rust. This project was made for a Rust winter-term class and is a partner project with a buddy of mine named Logan Sejas. Many hours were spent developing the code and game-logic. the initial structure was provided by Professor Bible.
 
 ## Features
 - Separates player data from scenes.
